@@ -1,0 +1,57 @@
+---
+- name: Install prerequistic packages (Ubuntu)
+  ansible.builtin.apt:
+    name:
+      - apt-transport-https
+      - gnupg
+      - curl
+    state: present
+    update_cache: yes
+  when: ansible_distribution == "Ubuntu"
+
+- name: Add Elastic GPG key (Ubuntu)
+  ansible.builtin.apt_key:
+    url: https://artifacts.elastic.co/GPG-KEY-elasticsearch
+    state: present
+  when: ansible_distribution == "Ubuntu"
+
+- name: Add Elastic repository (Ubuntu)
+  ansible.builtin.apt_repository:
+    repo: "deb https://artifacts.elastic.co/packages/8.x/apt stable main"
+    state: present
+  when: ansible_distribution == "Ubuntu"
+
+- name: Install Elasticsearch 8.19.0 (Ubuntu)
+  ansible.builtin.apt:
+    name: "elasticsearch=8.19.0"
+    state: present
+    update_cache: yes
+  when: ansible_distribution == "Ubuntu"
+
+- name: Import Elastic GPG Key (CentOS)
+  ansible.builtin.rpm_key:
+    key: https://artifacts.elastic.co/GPG-KEY-elasticsearch
+    state: present
+  when: ansible_distribution == "CentOS"
+
+- name: Add Elastic repository (CentOS)
+  ansible.builtin.yum_repository:
+    name: elasticsearch
+    description: Elastic repository for 8.19.0 packages
+    baseurl: "https://artifacts.elastic.co/packages/8.x/yum"
+    gpgcheck: yes
+    gpgkey: https://artifacts.elastic.co/GPG-KEY-elasticsearch
+    enabled: yes
+  when: ansible_distribution == "CentOS"
+
+- name: Install Elasticsearch 8.19.0 (CentOS)
+  ansible.builtin.dnf:
+    name: "elasticsearch-8.19.0"
+    state: present
+  when: ansible_distribution == "CentOS"
+
+- name: Enable and start Elasticsearch service
+  ansible.builtin.systemd:
+    name: elasticsearch
+    enabled: yes
+    state: started

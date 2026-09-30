@@ -1,0 +1,18 @@
+---
+- name: Deploy Elasticsearch Node
+  hosts: elasticsearch_nodes
+  become: yes
+  roles:
+    - elasticsearch
+
+- name: Deploy Kibana Node
+  hosts: kibana_nodes
+  become: yes
+  roles:
+    - kibana
+
+- name: Deploy Logstash Node
+  hosts: logstash_nodes
+  become: yes
+  roles:
+    - logstash
